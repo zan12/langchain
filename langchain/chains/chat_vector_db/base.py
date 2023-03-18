@@ -54,7 +54,7 @@ class ChatVectorDBChain(Chain, BaseModel):
         """
         _output_keys = [self.output_key]
         if self.return_source_documents:
-            _output_keys = _output_keys + ["source_documents"]
+            _output_keys = _output_keys + ["source_documents", "new_question"]
         return _output_keys
 
     @classmethod
@@ -92,6 +92,7 @@ class ChatVectorDBChain(Chain, BaseModel):
             )
         else:
             new_question = question
+        print(f"new question: {new_question}")
         docs = self.vectorstore.similarity_search(
             new_question, k=self.top_k_docs_for_context, **vectordbkwargs
         )
@@ -100,7 +101,7 @@ class ChatVectorDBChain(Chain, BaseModel):
         new_inputs["chat_history"] = chat_history_str
         answer, _ = self.combine_docs_chain.combine_docs(docs, **new_inputs)
         if self.return_source_documents:
-            return {self.output_key: answer, "source_documents": docs}
+            return {self.output_key: answer, "source_documents": docs, "new_question": new_question}
         else:
             return {self.output_key: answer}
 
