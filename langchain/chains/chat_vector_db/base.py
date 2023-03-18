@@ -92,7 +92,6 @@ class ChatVectorDBChain(Chain, BaseModel):
             )
         else:
             new_question = question
-        print(f"new question: {new_question}")
         docs = self.vectorstore.similarity_search(
             new_question, k=self.top_k_docs_for_context, **vectordbkwargs
         )
